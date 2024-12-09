@@ -1,0 +1,6 @@
+_target_: lightning.pytorch.Trainer
+max_epochs: 10
+accelerator: auto
+fast_dev_run: False
+strategy: auto
+deterministic: False

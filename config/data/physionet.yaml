@@ -1,0 +1,7 @@
+  _target_: src.datamodules.physionet_dataset.PhysioNet2012DataModule
+  raw_file_path:  data/physionet/physionet_2012.pkl
+  ratio_missing: 0.1
+  batch_size: 32
+  val_ratio: 0.2
+  test_ratio: 0.2
+  num_workers: 4

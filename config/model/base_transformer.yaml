@@ -1,0 +1,11 @@
+lightningmodule:
+  _target_: src.methods.transformer.lightningmodule.BaseClfTransformerLightningModule
+  d_model: 32
+  d_ffn: 16
+  n_heads: 2
+  d_k: 16
+  d_v: 16
+  n_layers: 1
+  dropout: 0.2
+  attn_dropout: 0.2
+name: clf_transformer

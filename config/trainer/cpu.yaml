@@ -1,0 +1,4 @@
+_target_: lightning.pytorch.Trainer
+accelerator: cpu
+max_epochs: 25
+deterministic: True

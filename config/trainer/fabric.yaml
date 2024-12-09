@@ -1,0 +1,11 @@
+_target_: lightning.fabric.Fabric
+accelerator: auto
+strategy: auto
+devices: 1
+num_nodes: 1
+precision: 32
+plugins: null
+loggers: null
+callbacks:
+  - _target_: src.callbacks.metrics.CVClassificationMetricsCallback
+    boot_val: False

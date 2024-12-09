@@ -1,0 +1,72 @@
+# @package _global_
+
+defaults:
+  - override /model: sslgan.yaml
+  - override /data: daicwoz.yaml
+  - override /trainer: cpu.yaml
+  - override /callbacks: 
+    - generation_callback.yaml
+    - model_checkpoint.yaml
+  - override /logger: tensorboard.yaml
+
+task: debug
+seed: 42
+data:
+  label: phq8
+  IS_BRITS: true
+  question: easy_sleep
+  open_face: all  # choices: eye_gaze, action_unit, landmark, all
+  delta_steps: 1
+  delta_average: false
+  ratio_missing: 0.1
+  type_missing: Random # choices: Random, CMV
+  batch_size: 32
+  num_workers: 4
+  regen: true
+model:
+  lightningmodule:
+    rnn_hid_size: 64
+    lambda_mse: 1.0
+    hint_rate: 1.0
+    dropout: 0.5
+    G_steps: 1
+    D_steps: 1
+    G_lr: 0.0001
+    D_lr: 0.0001
+trainer:
+  _target_: lightning.pytorch.Trainer
+  accelerator: cpu
+  max_epochs: 30
+  deterministic: true
+  devices: 4
+  num_nodes: 1
+  strategy: 
+    _target_: lightning.pytorch.strategies.DDPStrategy
+    find_unused_parameters: true
+callbacks:
+  generation_callback:
+    _target_: src.callbacks.generation.GenerationCallback
+    log_dir: ${paths.output_dir}
+  model_checkpoint:
+    _target_: lightning.pytorch.callbacks.ModelCheckpoint
+    monitor: val/imputation_loss
+    mode: min
+    save_top_k: 1
+    dirpath: ${paths.output_dir}
+    filename: '{epoch}-{val_mae:.2f}'
+    verbose: false
+    save_last: false
+    save_weights_only: false
+    auto_insert_metric_name: true
+    every_n_epochs: 1
+paths:
+  root_dir: .
+  data_dir: ${paths.root_dir}/data/
+  log_dir: ${paths.root_dir}/logs/
+  output_dir: ${hydra:runtime.output_dir}
+  work_dir: ${hydra:runtime.cwd}
+logger:
+  tensorboard:
+    _target_: lightning.pytorch.loggers.tensorboard.TensorBoardLogger
+    save_dir: ${paths.output_dir}
+    name: tensorboard

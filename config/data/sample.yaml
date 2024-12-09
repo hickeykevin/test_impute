@@ -1,0 +1,3 @@
+  _target_: src.datamodules.sample_dataset.SampleJSONDataModule
+  batch_size: 32
+  num_workers: 4

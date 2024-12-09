@@ -1,0 +1,13 @@
+_target_: src.datamodules.daicwoz.DAICWOZDatamodule
+label: phq8
+question: easy_sleep
+open_face: all  # choices: eye_gaze, action_unit, landmark, all
+delta_steps: 1
+delta_average: false
+regen: true
+ratio_missing: 0.1
+type_missing: Random # choices: Random, CMV
+batch_size: 32
+num_workers: 1
+val_ratio: 0.2
+ricardo: false

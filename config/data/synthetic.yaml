@@ -1,0 +1,10 @@
+  _target_: src.datamodules.synthetic_dataset.SyntheticDataModule
+  corr_name: medium # 'low', 'medium', 'high'
+  ratio_missing: 0.2 
+  type_missing: random # 'random', 'CMV' (connected missing values)
+  n_sample: 5000
+  n_features: 2
+  n_time: 40
+  batch_size: 32
+  num_workers: 2
+  shuffle: True

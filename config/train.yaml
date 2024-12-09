@@ -1,0 +1,19 @@
+# @package _global_
+
+# specify here default configuration
+
+defaults: 
+  - _self_
+  - data: daicwoz.yaml
+  - model: usgan.yaml
+  - trainer: cpu.yaml
+  - callbacks: default.yaml
+  - paths: default.yaml
+  - hydra: default.yaml
+  - logger: csv.yaml
+  - experiment: null
+
+# task name, determines output directory path
+task: train
+test: false
+seed: 42

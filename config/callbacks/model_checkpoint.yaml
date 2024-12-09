@@ -1,0 +1,12 @@
+model_checkpoint:
+  _target_: lightning.pytorch.callbacks.ModelCheckpoint
+  monitor: val/f1
+  mode: max
+  save_top_k:  1
+  dirpath: ${paths.output_dir}/checkpoints
+  filename: "{epoch}-{train_ckpt:.2f}"
+  verbose:  False
+  save_last:  False
+  save_weights_only:  False
+  auto_insert_metric_name:  True
+  every_n_epochs:  1

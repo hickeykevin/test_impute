@@ -1,0 +1,23 @@
+# @package _global_
+
+# specify here default configuration
+
+defaults: 
+  - _self_
+  - data: daicwoz.yaml
+  - model: brits.yaml
+  - trainer: fabric.yaml
+  - callbacks: none.yaml
+  - paths: default.yaml
+  - hydra: default.yaml
+  - logger: none.yaml
+  - experiment: null
+
+# task name, determines output directory path
+task: train
+test: false
+seed: 42
+folds: 3
+epochs: 2
+dry_run: true
+save_model: true

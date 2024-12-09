@@ -1,0 +1,2 @@
+lightningmodule:
+  _target_: src.simple_imputation.mean_lightningmodule.MeanImputationModel

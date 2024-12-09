@@ -1,0 +1,10 @@
+# https://hydra.cc/docs/configure_hydra/intro/
+
+# output directory, generated dynamically on each run
+# this is where all hydra logs are saved to
+run: 
+  dir: ${paths.log_dir}/${task}/${now:%m-%d-%H-%M-%S}
+  #subdir: ${hydra.job.num}
+sweep:
+  dir: ${paths.log_dir}/${task}/multiruns/${now:%m-%d-%H-%m-%S}
+  subdir: ${hydra.job.num}

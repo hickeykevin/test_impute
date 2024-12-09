@@ -1,0 +1,6 @@
+lightningmodule:
+  _target_: src.methods.ricardo_brits.lightningmodule.RicardoLightningmodule
+  rnn_hidden_size: 32
+  lr: 0.001
+
+name: ricardo_brits

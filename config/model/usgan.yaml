@@ -1,0 +1,14 @@
+lightningmodule:
+  _target_: src.methods.usgan.lightningmodule.USGANLightningModule
+  rnn_hidden_size: 256
+  lambda_mse: 1.0
+  hint_rate: 0.7
+  dropout: 0.5
+  G_steps: 1
+  D_steps: 1
+  G_lr: 0.0001
+  D_lr: 0.0001
+  reconstruction_weight: 0.5
+  classification_weight: 0.5
+name: usgan
+

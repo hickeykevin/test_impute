@@ -1,0 +1,16 @@
+lightningmodule:
+  _target_: src.methods.csdi.lightningmodule.CSDILightningModule
+  n_layers: 4
+  n_heads: 8
+  n_channels: 64
+  n_features: 162 # need to match this manually with whatever data.datamodule.openface is (162 for all, 12 for eye_gaze)
+  d_time_embedding: 64
+  d_feature_embedding: 64
+  d_diffusion_embedding: 128
+  is_unconditional: False
+  n_diffusion_steps: 50
+  schedule: quad
+  beta_start: 00001
+  beta_end: 05
+  lr: 0.001
+name: csdi 
