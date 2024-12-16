@@ -117,7 +117,7 @@ def cross_validate(
         model = instantiate(cfg.model.lightningmodule)
         model: pl.LightningModule = instantiate(cfg.model.lightningmodule)
         model.trainer = DummyTrainer(datamodule)
-        model.setup(stage="fit")
+        model.setup(stage="fit", data_init_info=datamodule.data_info())
 
         optimizer = model.configure_optimizers()
 

@@ -12,8 +12,12 @@ defaults:
   - hydra: default.yaml
   - logger: csv.yaml
   - experiment: null
+  - extras: default.yaml
 
 # task name, determines output directory path
 task: train
 test: false
+tags: ['default']
 seed: 42
+optimized_metric: null
+extras: true

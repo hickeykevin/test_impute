@@ -1,5 +1,5 @@
 method: grid
-name: brits_compare_sweep_cv
+name: all_questions_brits_compare_sweep_cv
 project: multitask_missing
 program: cross_validate.py
 metric:
@@ -10,11 +10,21 @@ metric:
 parameters:
   data.question:
     values:
-      - dream_job
+      - advice_yourself
       - anything_regret
       - argued_someone
       - controlling_temper
+      - diagnosed_depression
+      - diagnosed_p_t_s_d
       - doing_today
+      - dream_job
+      - easy_sleep
+      - feeling_lately
+      - friend_describe
+      - last_happy
+      - proud_life
+      - study_school
+      - travel_lot
   data.open_face:
     values:
       - eye_gaze
@@ -31,11 +41,10 @@ parameters:
       - 0.15
       - 0.2
       - 0.25
-  data.type_missing:
-    values:
-      - Random
+      - 0.30
   data.batch_size:
     values:
+      - 16
       - 32
   model.lightningmodule.rnn_hidden_size:
     values:
@@ -53,7 +62,7 @@ command:
   - ${program}
   - ${args_no_hyphens}
   - logger=fabric_wandb
-  - epochs=75
+  - epochs=100
   - optimized_metric=f1
   - folds=3
   - callbacks=[cv_eval]

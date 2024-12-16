@@ -1,8 +1,11 @@
 lightningmodule:
-  _target_: src.methods.brits.lightningmodule.BRITSLightningModule
+  _target_: src.methods.brits.lightningmodule.BRITSLightningModuleWrapper
+  missing_ratio: ${data.ratio_missing}
+  # ---------------------
+  # kwargs
+  # ---------------------
   rnn_hidden_size: 64
   classification_weight: 0.5
   reconstruction_weight: 0.5
   lr: 0.001
-  pypots: False
 name: brits
