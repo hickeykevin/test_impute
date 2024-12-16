@@ -7,10 +7,10 @@ defaults:
   - data: daicwoz.yaml
   - model: brits.yaml
   - trainer: fabric.yaml
-  - callbacks: none.yaml
+  - callbacks: cv_eval.yaml
   - paths: default.yaml
   - hydra: default.yaml
-  - logger: none.yaml
+  - logger: none.yamls
   - experiment: null
 
 # task name, determines output directory path
@@ -20,4 +20,5 @@ seed: 42
 folds: 3
 epochs: 2
 dry_run: true
-save_model: true
+save_model: false
+optimized_metric: 'f1'

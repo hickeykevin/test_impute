@@ -213,7 +213,9 @@ class MultiTaskBRITS(_BRITS):
         results = {
             "loss": loss,
             "imputed_data": imputed_data,
-            "classification_pred": predictions,
+            "classification_pred": {
+                "values": predictions,
+                "is_sigmoid": True},
         }
 
         # if in training mode, return results with losses

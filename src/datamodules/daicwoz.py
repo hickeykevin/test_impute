@@ -355,7 +355,7 @@ class DAICWOZDataset(Dataset):
         self.data_with_missing = self.input_missing(ratio_missing, type_missing)
 
     def __len__(self):
-        return len(self.data_with_missing['X'])
+        return len(self.data_with_missing)
     
     def __getitem__(self, idx):
         """Extract an example from a dataset.

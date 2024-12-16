@@ -1,0 +1,59 @@
+method: grid
+name: brits_compare_sweep_cv
+project: multitask_missing
+program: cross_validate.py
+metric:
+  name: 'f1'
+  goal: maximize
+
+
+parameters:
+  data.question:
+    values:
+      - dream_job
+      - anything_regret
+      - argued_someone
+      - controlling_temper
+      - doing_today
+  data.open_face:
+    values:
+      - eye_gaze
+      - landmark
+      - action_unit
+      - all
+  model.lightningmodule.lr:
+    values:
+      - 0.001
+  data.ratio_missing:
+    values:
+      - 0.05
+      - 0.1
+      - 0.15
+      - 0.2
+      - 0.25
+  data.type_missing:
+    values:
+      - Random
+  data.batch_size:
+    values:
+      - 32
+  model.lightningmodule.rnn_hidden_size:
+    values:
+      - 32
+  model.lightningmodule.reconstruction_weight:
+    values:
+      - 1.0
+  model.lightningmodule.classification_weight:
+    values:
+      - 0.1
+
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - ${args_no_hyphens}
+  - logger=fabric_wandb
+  - epochs=75
+  - optimized_metric=f1
+  - folds=3
+  - callbacks=[cv_eval]

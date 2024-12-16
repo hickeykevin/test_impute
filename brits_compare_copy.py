@@ -20,7 +20,7 @@ import wandb
 import copy
 from tqdm import trange
 
-from multitask_missing_q10_ours_copy import Model_brits_att, to_var, get_loader, binary_cross_entropy_with_logits, TemporalDecay, FeatureRegression
+from multitask_missing_q10_ours_copy import to_var, get_loader, binary_cross_entropy_with_logits, TemporalDecay, FeatureRegression
 from lightning.pytorch import seed_everything
 from typing import Dict, Any
 

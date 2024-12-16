@@ -117,13 +117,16 @@ class BRITSLightningModule(LightningModule):
             "X_ori": batch["forward"]["X"],
             "indicating_mask": batch["forward"]["missing_mask"]
             }
+
+    def on_train_batch_end(self, *args, **kwargs):
+        pass
     
     def validation_step(self, batch, batch_idx):
         # check if batch is not an empty dict (datamodule.hparams.val_ratio = 0.0)
        
         data = self._assemble_input_for_validating(batch)
         out = self.model(data, training=False)
-        predictions = out['classification_pred']
+        predictions: Dict = out['classification_pred']
         return {
             "loss": out['loss'],
             "clf_logits": predictions,
@@ -131,6 +134,9 @@ class BRITSLightningModule(LightningModule):
             "X_ori": data["X_ori"],
             "indicating_mask": data["indicating_mask"]
         }
+
+    def on_validation_batch_end(self, *args, **kwargs):
+        pass
         
     def test_step(self, batch, batch_idx):
         """

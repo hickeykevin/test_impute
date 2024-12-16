@@ -1,0 +1,4 @@
+fabric_wandb:
+  _target_: wandb.integration.lightning.fabric.WandbLogger
+  project: multitask_missing
+  save_dir: ${paths.output_dir}

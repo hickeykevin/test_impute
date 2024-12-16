@@ -1,8 +1,8 @@
 defaults:
   - model_checkpoint.yaml
   - model_summary.yaml
-  - clf_metrics.yaml
-  - rich_progress_bar.yaml
+  # - clf_metrics.yaml
+  # - rich_progress_bar.yaml
   - _self_
 
 model_checkpoint:
