@@ -9,9 +9,6 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from pathlib import Path, PosixPath
 from lightning.pytorch import LightningDataModule
-import re
-from multitask_missing_q10 import MySet
-from multitask_missing_q10 import collate_fn as ricardo_collate_fn
 
 def miss_f(x, n_miss, random = True):
     x1 = x.copy()
