@@ -1,6 +1,6 @@
 #from torch.utils.data import Dataset
 import os
-from typing import Dict, List, Literal, Union
+from typing import Any, Dict, List, Literal, Union
 from lightning.pytorch.utilities.types import TRAIN_DATALOADERS, EVAL_DATALOADERS
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
@@ -131,21 +131,52 @@ class DAICWOZDatamodule(LightningDataModule):
             None
         """
         
-        data, labels_phq8, labels_ptsd, index_train, index_test, train_id, test_id = self.generate()
-        # outputs = [data, labels]
-        outputs = {
-            "data": data, 
-            "labels_phq8": labels_phq8, 
-            "labels_ptsd": labels_ptsd, 
-            "index_train": index_train, 
-            "index_test": index_test,
-            "train_id": train_id,
-            "test_id": test_id
-        }
-        (self.data_file_path.parent).mkdir(parents=True, exist_ok=True)
-        torch.save(outputs, self.data_file_path)
-        
+        pass
     
+    
+    def setup(self, stage=None):
+        """
+        Set up the data module. This method creates the final Dataset obect to be split into 
+        training and testing sets.
+
+        Args:
+            stage: Optional[str]: The stage of the data module (e.g., 'fit', 'test', 'predict').
+
+        Returns:
+            None
+        """
+        outputs: Dict = self.generate()
+        self.dataset = DAICWOZDataset(
+            outputs=outputs,
+            target=self.hparams.label,
+            ratio_missing=self.hparams.ratio_missing,
+            type_missing=self.hparams.type_missing
+        )
+        self.train_dataset = [sample for sample in self.dataset if sample['is_train'] == 1]
+        
+        if self.hparams.ricardo:
+            self.val_dataset = [sample for sample in self.dataset if sample['is_train'] == 0]
+            self.test_dataset = torch.tensor([0.0])
+        elif not self.hparams.ricardo and self.hparams.val_ratio == 0.0:
+            self.val_dataset = torch.tensor([0.0])
+            self.test_dataset = [sample for sample in self.dataset if sample['is_train'] == 0]
+        else:
+            import random
+            self.train_dataset = random.sample(self.train_dataset, int(len(self.train_dataset) * (1 - self.hparams.val_ratio)))
+            self.val_dataset = random.sample(self.train_dataset, int(len(self.train_dataset) * self.hparams.val_ratio))
+            self.test_dataset = [sample for sample in self.dataset if sample['is_train'] == 0]
+
+            
+    def train_dataloader(self): #-> TRAIN_DATALOADERS:
+        return DataLoader(self.train_dataset, batch_size=self.hparams.batch_size, shuffle=True)
+
+    def val_dataloader(self) -> EVAL_DATALOADERS:
+        return DataLoader(self.val_dataset, batch_size=self.hparams.batch_size, shuffle=False)
+    
+    def test_dataloader(self) -> EVAL_DATALOADERS:
+        return DataLoader(self.test_dataset, batch_size=self.hparams.batch_size, shuffle=False)
+    
+
     def generate(self):
         """
         Aggregates the data based on the supplied `question` and `open_face` arguments.
@@ -282,68 +313,31 @@ class DAICWOZDatamodule(LightningDataModule):
         train_id: List = train_label.Participant_ID.tolist()  
         test_id: List = test_label.Participant_ID.tolist()      
         #print('data.shape:',data.shape) #[seq, batch, features]
-        
-        return data, labels_phq8, labels_ptsd, index_train, index_test, train_id, test_id #get train_id, test_id, which is id_train = df_label[df_label['is_train']==1].id.tolist() from daicwoz.py
-    
-    def setup(self, stage=None):
-        """
-        Set up the data module. This method creates the final Dataset obect to be split into 
-        training and testing sets.
-
-        Args:
-            stage: Optional[str]: The stage of the data module (e.g., 'fit', 'test', 'predict').
-
-        Returns:
-            None
-        """
-        self.dataset = DAICWOZDataset(
-            target=self.hparams.label,
-            ratio_missing=self.hparams.ratio_missing,
-            type_missing=self.hparams.type_missing
-        )
-        self.train_dataset = [sample for sample in self.dataset if sample['is_train'] == 1]
-        
-        if self.hparams.ricardo:
-            self.val_dataset = [sample for sample in self.dataset if sample['is_train'] == 0]
-            self.test_dataset = torch.tensor([0.0])
-        elif not self.hparams.ricardo and self.hparams.val_ratio == 0.0:
-            self.val_dataset = torch.tensor([0.0])
-            self.test_dataset = [sample for sample in self.dataset if sample['is_train'] == 0]
-        else:
-            import random
-            self.train_dataset = random.sample(self.train_dataset, int(len(self.train_dataset) * (1 - self.hparams.val_ratio)))
-            self.val_dataset = random.sample(self.train_dataset, int(len(self.train_dataset) * self.hparams.val_ratio))
-            self.test_dataset = [sample for sample in self.dataset if sample['is_train'] == 0]
-
-            
-    def train_dataloader(self): #-> TRAIN_DATALOADERS:
-        return DataLoader(self.train_dataset, batch_size=self.hparams.batch_size, shuffle=True)
-
-    def val_dataloader(self) -> EVAL_DATALOADERS:
-        return DataLoader(self.val_dataset, batch_size=self.hparams.batch_size, shuffle=False)
-    
-    def test_dataloader(self) -> EVAL_DATALOADERS:
-        return DataLoader(self.test_dataset, batch_size=self.hparams.batch_size, shuffle=False)
-    
+        return {
+            "data": data, 
+            "labels_phq8": labels_phq8, 
+            "labels_ptsd": labels_ptsd, 
+            "index_train": index_train, 
+            "index_test": index_test, 
+            "train_id": train_id, 
+            "test_id": test_id
+        }
 
         
 class DAICWOZDataset(Dataset):
     
     def __init__(
             self, 
+            outputs: Dict[str, Union[torch.Tensor, List[int]]],
             target: Union[str, List[str]] = 'both',
             ratio_missing: float = 0.1,
             type_missing: Literal['Random', 'CMV'] = "Random"
             ):
         super().__init__()
 
-
-        self.data_path = Path(__file__).parent.parent.parent / 'data' / 'daicwoz'
-        self.data_file_path = self.data_path / "edaic2" / "data.pt"
-        self.all_data = torch.load(self.data_file_path)
-        assert self.data_file_path.exists(), "Data file not found. Please run the datamodule.prepare_data() to generate the data."
+        assert all([key in outputs.keys() for key in ['data', 'labels_phq8', 'labels_ptsd', 'index_train', 'index_test', 'train_id', 'test_id']]), "Data file does not contain the required keys."
+        self.all_data = outputs
         # check that the keys 'data', 'labels_phq8', 'labels_ptsd', 'index_train', 'index_test' are in the file
-        assert all([key in self.all_data.keys() for key in ['data', 'labels_phq8', 'labels_ptsd', 'index_train', 'index_test', 'train_id', 'test_id']]), "Data file does not contain the required keys."
         self.train_indices = self.all_data['index_train']
         self.test_indices = self.all_data['index_test']
         self.train_id = self.all_data['train_id']
